@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 BRANCH=origin/master
+MESSAGE=""
 
 function usage() {
     cat << EOF
@@ -39,7 +40,7 @@ function commitOnGreen() {
     if lastCommitRed; then
         git commit --amend --no-edit
     else
-        git commit --allow-empty-message -m ""
+        git commit --allow-empty-message -m "$MESSAGE"
     fi && \
     git update-ref -d ${RED_REF}
 }
@@ -84,7 +85,7 @@ function needsPush(){
 ASSUMING_GREEN=false
 ASSUMING_RED=false
 
-while getopts ":rgh" opt; do
+while getopts ":rghim:" opt; do
   case ${opt} in
     g )
       ASSUMING_GREEN=true
@@ -94,6 +95,9 @@ while getopts ":rgh" opt; do
       ;;
     h )
       usage
+      ;;
+    m )
+      MESSAGE="${OPTARG}"
       ;;
     \? )
       echo "Invalid option: $OPTARG" 1>&2
