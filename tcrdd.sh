@@ -1,8 +1,13 @@
 #!/usr/bin/env bash
 BRANCH=origin/master
-CMD="exit -1"
 TEST_KEYWORD="Expect"
 
+function usage() {
+    cat << EOF
+$0 [-g|-r] testCommand and arguments
+EOF
+    exit -1
+}
 function runTest() {
    $CMD
 }
