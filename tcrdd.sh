@@ -21,6 +21,11 @@ function testJustAdded(){
 
 RED_REF=refs/isRed
 
+# set the message of the last commit to the given message
+function setMessage() {
+    git commit --amend -m "$MESSAGE"
+}
+
 # amend in case of test refactoring (last commit is red, same test)
 function commitOnRed() {
     git add . && \
@@ -40,8 +45,9 @@ function commitOnGreen() {
     if lastCommitRed; then
         git commit --amend --no-edit
     else
-        git commit --allow-empty-message -m "$MESSAGE"
+        git commit --allow-empty-message -m ""
     fi && \
+    setMessage && \
     git update-ref -d ${RED_REF}
 }
 
