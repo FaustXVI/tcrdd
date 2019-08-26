@@ -103,6 +103,10 @@ done
 shift $((OPTIND -1))
 
 CMD="$@"
+if [ -z "$CMD" ]
+then
+    usage
+fi
 
 if ${ASSUMING_RED} || (! ${ASSUMING_GREEN} && testJustAdded)
 then
