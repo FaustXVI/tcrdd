@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 BRANCH=origin/master
+CMD="exit -1"
 TEST_KEYWORD="Expect"
 
 function runTest() {
-    ./node_modules/.bin/elm-test
+   $CMD
 }
 
 # look for a new test in a + line in the diff
@@ -77,24 +78,22 @@ function needsPush(){
 ASSUMING_GREEN=false
 ASSUMING_RED=false
 
-while [[ $# -gt 0 ]]
-do
-    key="$1"
-
-    case ${key} in
-        -g|--green)
-            ASSUMING_GREEN=true
-            shift
-            ;;
-        -r|--red)
-            ASSUMING_RED=true
-            shift
-            ;;
-        *)
-            shift
-            ;;
-    esac
+while getopts ":rg" opt; do
+  case ${opt} in
+    g )
+      ASSUMING_GREEN=true
+      ;;
+    r )
+      ASSUMING_RED=true
+      ;;
+    \? )
+      echo "Invalid option: $OPTARG" 1>&2
+      ;;
+  esac
 done
+shift $((OPTIND -1))
+
+CMD="$@"
 
 if ${ASSUMING_RED} || (! ${ASSUMING_GREEN} && testJustAdded)
 then
