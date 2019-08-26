@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 BRANCH=origin/master
-TEST_KEYWORD="Expect"
 
 function usage() {
     cat << EOF
 $0 [-g|-r] testCommand and arguments
+The TEST_KEYWORD environment variable is assumed to be set to a regex that, when present in the added code, means a test was just added
 EOF
     exit -1
 }
@@ -104,6 +104,10 @@ shift $((OPTIND -1))
 
 CMD="$@"
 if [ -z "$CMD" ]
+then
+    usage
+fi
+if [ -z "$TEST_KEYWORD" ]
 then
     usage
 fi
