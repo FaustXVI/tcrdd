@@ -32,9 +32,9 @@ function setMessage() {
 function commitOnRed() {
     git add . && \
     if lastCommitRed; then
-        git commit --amend
+        git commit --amend --no-edit
     else
-        git commit
+        git commit --allow-empty-message -m ""
     fi && \
     setMessage && \
     git update-ref ${RED_REF} HEAD
