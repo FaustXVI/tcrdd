@@ -8,6 +8,7 @@ $0 [-g|-r] testCommand and arguments
 EOF
     exit -1
 }
+
 function runTest() {
    $CMD
 }
@@ -83,13 +84,16 @@ function needsPush(){
 ASSUMING_GREEN=false
 ASSUMING_RED=false
 
-while getopts ":rg" opt; do
+while getopts ":rgh" opt; do
   case ${opt} in
     g )
       ASSUMING_GREEN=true
       ;;
     r )
       ASSUMING_RED=true
+      ;;
+    h )
+      usage
       ;;
     \? )
       echo "Invalid option: $OPTARG" 1>&2
