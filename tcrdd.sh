@@ -23,7 +23,9 @@ RED_REF=refs/isRed
 
 # set the message of the last commit to the given message
 function setMessage() {
-    git commit --amend -m "$MESSAGE"
+    if [ ! -z "$MESSAGE" ]; then
+        git commit --amend -m "$MESSAGE"
+    fi
 }
 
 # amend in case of test refactoring (last commit is red, same test)
@@ -34,6 +36,7 @@ function commitOnRed() {
     else
         git commit
     fi && \
+    setMessage && \
     git update-ref ${RED_REF} HEAD
 }
 
