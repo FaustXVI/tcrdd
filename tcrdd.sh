@@ -32,7 +32,7 @@ function setMessage() {
 function commitOnRed() {
     git add . && \
     if lastCommitRed; then
-        git commit --amend --no-edit
+        git commit --amend --no-edit --allow-empty-message
     else
         git commit --allow-empty-message -m ""
     fi && \
@@ -46,7 +46,7 @@ function commitOnRed() {
 function commitOnGreen() {
     git add . && \
     if lastCommitRed; then
-        git commit --amend --no-edit
+        git commit --amend --no-edit --allow-empty-message
     else
         git commit --allow-empty-message -m ""
     fi && \
