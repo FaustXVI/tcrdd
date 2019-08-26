@@ -1,13 +1,13 @@
-{ nixpkgs ? import <nixpkgs> {} }:
+{ stdenv }:
 
-let
-  inherit (nixpkgs) callPackage pkgs stdenv;
-  tcrdd = callPackage ./scripts {};
-in
-  stdenv.mkDerivation {
-    name = "tcrdd-env";
-    buildInputs = with pkgs; [
-      tcrdd
-    ];
-  }
+stdenv.mkDerivation rec {
+  name = "tcrdd";
+  version = "latest";
+  buildInputs = [ ];
 
+  src = ./.;
+  installPhase = ''
+    mkdir -p $out/bin
+    cp $src/tcrdd.sh $out/bin/tcrdd
+  '';
+}
