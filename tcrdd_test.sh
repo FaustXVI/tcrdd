@@ -2,11 +2,14 @@
 . ./test_utils.sh
 
 test_commits_when_tests_are_ok() {
+    headHash=$(runAsAlice git log -1 --pretty=%H)
     echo content > ${aliceClone}/aFile
     runAsAlice ./tcrdd.sh true > /dev/null 2>&1
     status=$(runAsAlice git status -s)
     message=$(runAsAlice git log -1 --pretty=%B)
-    assertTrue 'Alice s code is not commited' '[ -z "$status" ]'
+    currentHash=$(runAsAlice git log -1 --pretty=%H)
+    assertFalse 'Alice s code is not commited' '[ "$headHash" = "$currentHash" ]'
+    assertTrue 'Not everything is committed by alice' '[ -z "$status" ]'
     assertTrue 'Alice commit message should be empty' '[ -z "$message" ]'
     assertTrue 'Created file should still be there' '[ -f ${aliceClone}/aFile ]'
 }
