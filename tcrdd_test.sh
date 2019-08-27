@@ -8,6 +8,7 @@ test_commits_when_tests_are_ok() {
     message=$(runAsAlice git log -1 --pretty=%B)
     assertTrue 'Alice s code is not commited' '[ -z "$status" ]'
     assertTrue 'Alice commit message should be empty' '[ -z "$message" ]'
+    assertTrue 'Created file should still be there' '[ -f ${aliceClone}/aFile ]'
 }
 
 oneTimeSetUp() {
