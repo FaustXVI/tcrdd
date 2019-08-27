@@ -1,7 +1,7 @@
 #! /usr/bin/env bash
 . ./test_utils.sh
 
-testCommits_when_tests_are_ok() {
+test_commits_when_tests_are_ok() {
     echo content > ${aliceClone}/aFile
     runAsAlice ./tcrdd.sh true > /dev/null 2>&1
     status=$(runAsAlice git status -s)
