@@ -1,8 +1,12 @@
 #! /usr/bin/env bash
 . ./test_utils.sh
 
+getHeadHash() {
+    git log -1 --pretty=%H
+}
+
 test_commits_when_tests_are_ok() {
-    headHash=$(runAsAlice git log -1 --pretty=%H)
+    headHash=$(runAsAlice getHeadHash)
     echo content > ${aliceClone}/aFile
     runAsAlice ./tcrdd.sh true > /dev/null 2>&1
     status=$(runAsAlice git status -s)
