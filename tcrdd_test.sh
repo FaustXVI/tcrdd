@@ -1,8 +1,12 @@
 #! /usr/bin/env bash
 . ./test_utils.sh
 
-testAliceRepositoryIsInitialised() {
-    assertTrue 'Alice is not initialised' "[ -d ${aliceClone}/.git ]"
+testCommits_when_tests_are_ok() {
+    echo content > ${aliceClone}/aFile
+    runAsAlice ./tcrdd.sh true > /dev/null 2>&1
+    status=$(runAsAlice git status -s)
+    result=$(test -z "$status")
+    assertTrue 'Alice s code is not commited' '[ -z "$status" ]'
 }
 
 oneTimeSetUp() {
@@ -16,7 +20,6 @@ oneTimeSetUp() {
 
 setUp() {
     createRepositories > /dev/null 2>&1
-    runAsAlice git commit --allow-empty -m "Initial commit" > /dev/null
 }
 
 tearDown() {

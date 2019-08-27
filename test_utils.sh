@@ -17,10 +17,17 @@ runAsBob() {
 
 createRepositories() {
     git init --bare ${bareRepository}
+
     git clone ${bareRepository} ${aliceClone}
-    git clone ${bareRepository} ${bobClone}
     runAsAlice git config user.name Alice
     runAsAlice git config user.email alice@tcr.com
+    runAsAlice git commit --allow-empty -m "Initial commit" > /dev/null
+    cp ./tcrdd.sh ${aliceClone}/tcrdd.sh
+    runAsAlice git add tcrdd.sh
+    runAsAlice git commit -m "Add tcrdd script" > /dev/null
+    runAsAlice git push > /dev/null 2>&1
+    
+    git clone ${bareRepository} ${bobClone}
     runAsBob git config user.name Bob
     runAsBob git config user.email bob@tcr.com
 }
