@@ -1,14 +1,6 @@
 #! /usr/bin/env bash
 . ./test_utils.sh
 
-getHeadHash() {
-    git log -1 --pretty=%H
-}
-
-getHeadMessage() {
-    git log -1 --pretty=%B
-}
-
 test_commits_when_tests_are_ok() {
     headHash=$(runAsAlice getHeadHash)
     echo content > ${aliceClone}/aFile

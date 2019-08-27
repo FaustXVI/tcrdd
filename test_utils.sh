@@ -36,3 +36,10 @@ deleteRepositories() {
     rm -rf ${bareRepository} ${aliceClone} ${bobClone}
 }
 
+getHeadHash() {
+    git log -1 --pretty=%H
+}
+
+getHeadMessage() {
+    git log -1 --pretty=%B
+}
