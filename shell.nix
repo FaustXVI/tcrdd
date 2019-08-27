@@ -3,7 +3,7 @@
 with nixpkgs;
 stdenv.mkDerivation {
   name = "tcrdd-env";
-  TEST_KEYWORD="there is no tests";
+  TEST_KEYWORD="test_";
   buildInputs = with pkgs; [
     bash
     git
