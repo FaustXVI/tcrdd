@@ -5,13 +5,17 @@ getHeadHash() {
     git log -1 --pretty=%H
 }
 
+getHeadMessage() {
+    git log -1 --pretty=%B
+}
+
 test_commits_when_tests_are_ok() {
     headHash=$(runAsAlice getHeadHash)
     echo content > ${aliceClone}/aFile
     runAsAlice ./tcrdd.sh true > /dev/null 2>&1
     status=$(runAsAlice git status -s)
-    message=$(runAsAlice git log -1 --pretty=%B)
-    currentHash=$(runAsAlice git log -1 --pretty=%H)
+    message=$(runAsAlice getHeadMessage)
+    currentHash=$(runAsAlice getHeadHash)
     assertFalse 'Alice s code is not commited' '[ "$headHash" = "$currentHash" ]'
     assertTrue 'Not everything is committed by alice' '[ -z "$status" ]'
     assertTrue 'Alice commit message should be empty' '[ -z "$message" ]'
@@ -19,11 +23,11 @@ test_commits_when_tests_are_ok() {
 }
 
 test_reverts_when_test_are_ko() {
-    headHash=$(runAsAlice git log -1 --pretty=%H)
+    headHash=$(runAsAlice getHeadHash)
     echo content > ${aliceClone}/aFile
     runAsAlice ./tcrdd.sh false > /dev/null 2>&1
     status=$(runAsAlice git status -s)
-    currentHash=$(runAsAlice git log -1 --pretty=%H)
+    currentHash=$(runAsAlice getHeadHash)
     assertTrue 'Alice s code is not reverted' '[ -z "$status" ]'
     assertTrue 'Alice head should be the same as before' '[ "$headHash" = "$currentHash" ]'
     assertFalse 'Created file should be removed' '[ -f ${aliceClone}/aFile ]'
