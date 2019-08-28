@@ -36,11 +36,11 @@ test_commits_push_when_tests_are_ok() {
     message=$(runAsAlice getHeadMessage)
     currentHash=$(runAsAlice getHeadHash)
     originHash=$(runAsAlice getOriginHeadHash)
-    assertFalse 'Alice s code is not commited' '[ "$headHash" = "$currentHash" ]'
-    assertTrue 'Not everything is committed by alice' '[ -z "$status" ]'
-    assertTrue 'Alice commit message should be empty' '[ -z "$message" ]'
+    assertNotEquals 'Alice s code is not commited' "$headHash" "$currentHash"
+    assertNull 'Not everything is committed by alice' "$status"
+    assertNull 'Alice commit message should be empty' "$message"
     assertTrue 'Created file should still be there' '[ -f ${aliceClone}/aFile ]'
-    assertTrue 'Alice s should be pushed' '[ "$originHash" = "$currentHash" ]'
+    assertEquals 'Alice s should be pushed' "$originHash" "$currentHash"
 }
 
 test_reverts_on_green_when_assumed_red() {
