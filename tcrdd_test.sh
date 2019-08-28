@@ -96,7 +96,7 @@ test_auto_detects_green_step_when_no_new_test() {
     assertNotEquals 'Alice s code should be commited' "$headHash" "$currentHash"
 }
 
-test_ammend_commit_with_two_red_steps() {
+test_amend_commit_with_two_red_steps() {
     headHash=$(runAsAlice getHeadHash)
     echo content > ${aliceClone}/aFile
     runAsAlice ./tcrdd.sh -r false > /dev/null 2>&1
@@ -111,7 +111,7 @@ test_ammend_commit_with_two_red_steps() {
     assertEquals 'Only one commit should exist' "1" "${nbCommits}"
 }
 
-test_ammend_commit_with_two_red_steps() {
+test_amend_commit_with_two_red_steps() {
     headHash=$(runAsAlice getHeadHash)
     echo content > ${aliceClone}/aFile
     runAsAlice ./tcrdd.sh -r false > /dev/null 2>&1
