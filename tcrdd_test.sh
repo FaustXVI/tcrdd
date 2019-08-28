@@ -31,7 +31,7 @@ test_print_usage_when_no_test_keyword_present() {
 test_commits_push_when_tests_are_ok() {
     headHash=$(runAsAlice getHeadHash)
     echo content > ${aliceClone}/aFile
-    runAsAlice ./tcrdd.sh true > /dev/null 2>&1
+    runAsAlice ./tcrdd.sh -g true > /dev/null 2>&1
     status=$(runAsAlice git status -s)
     message=$(runAsAlice getHeadMessage)
     currentHash=$(runAsAlice getHeadHash)
@@ -57,7 +57,7 @@ test_reverts_on_green_when_assumed_red() {
 test_reverts_when_test_are_ko() {
     headHash=$(runAsAlice getHeadHash)
     echo content > ${aliceClone}/aFile
-    runAsAlice ./tcrdd.sh false > /dev/null 2>&1
+    runAsAlice ./tcrdd.sh -g false > /dev/null 2>&1
     status=$(runAsAlice git status -s)
     currentHash=$(runAsAlice getHeadHash)
     assertTrue 'Alice s code is not reverted' '[ -z "$status" ]'
