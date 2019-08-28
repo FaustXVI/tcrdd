@@ -22,13 +22,6 @@ function testJustAdded(){
 
 RED_REF=refs/isRed
 
-# set the message of the last commit to the given message
-function setMessage() {
-    if [ ! -z "$MESSAGE" ]; then
-        git commit --amend -m "$MESSAGE"
-    fi
-}
-
 function commit() {
     if lastCommitRed; then
         if [ ! -z "$MESSAGE" ]; then
@@ -43,16 +36,14 @@ function commit() {
 
 # amend in case of test refactoring (last commit is red, same test)
 function commitOnRed() {
-    commit &&\
-    git update-ref ${RED_REF} HEAD
+    commit && git update-ref ${RED_REF} HEAD
 }
 
 # amend if last commit was a test, with no change to the commit message
 # in case if last commit was green commit with empty message (/?\ should refactoring have commit messages?)
 # remove any RED tag reference
 function commitOnGreen() {
-    commit && \
-    git update-ref -d ${RED_REF}
+    commit && git update-ref -d ${RED_REF}
 }
 
 # finds a previous commit tagged Red, returns true if same as current work
