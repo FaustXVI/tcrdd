@@ -23,9 +23,9 @@ test_print_usage_when_no_test_keyword_present() {
     status=$(runAsAlice git status -s)
     currentHash=$(runAsAlice getHeadHash)
     stdoutContent=$(cat $stdout)
-    assertTrue 'Alice s code is not commited' '[ "$headHash" = "$currentHash" ]'
-    assertTrue "Nothing should have changed for git, was \"$status\" expected \"$startStatus\"" '[ "$startStatus" = "$status" ]'
-    assertTrue "" '[[ "$stdoutContent" =~ "Usage :" ]]'
+    assertEquals 'Alice s code should not be commited' "$headHash" "$currentHash"
+    assertEquals "Nothing should have changed for git" "$startStatus" "$status"
+    assertContains "Usage should be displayed" "$stdoutContent" "Usage :"
 }
 
 test_commits_push_when_tests_are_ok() {
