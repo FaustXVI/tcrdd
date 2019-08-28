@@ -126,6 +126,7 @@ then
     usage
 fi
 
+git add .
 if ${ASSUMING_RED} || (! ${ASSUMING_GREEN} && testJustAdded)
 then
     echo red

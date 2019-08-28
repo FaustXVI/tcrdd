@@ -80,6 +80,14 @@ test_commits_no_push_on_red_when_assumed_red() {
     assertFalse 'Alice s should not be pushed' '[ "$originHash" = "$currentHash" ]'
 }
 
+test_auto_detects_red_step_with_new_test_file() {
+    headHash=$(runAsAlice getHeadHash)
+    echo "${TEST_KEYWORD} content" > ${aliceClone}/aFile
+    runAsAlice ./tcrdd.sh false 
+    currentHash=$(runAsAlice getHeadHash)
+    assertFalse 'Alice s code should be commited' '[ "$headHash" = "$currentHash" ]'
+}
+
 oneTimeSetUp() {
     export HOME="${SHUNIT_TMPDIR}"
     workingDirectory=`pwd`
