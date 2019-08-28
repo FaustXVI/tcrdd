@@ -93,7 +93,7 @@ test_auto_detects_green_step_when_no_new_test() {
     echo content > ${aliceClone}/aFile
     runAsAlice ./tcrdd.sh true > /dev/null 2>&1
     currentHash=$(runAsAlice getHeadHash)
-    assertFalse 'Alice s code should be commited' '[ "$headHash" = "$currentHash" ]'
+    assertNotEquals 'Alice s code should be commited' "$headHash" "$currentHash"
 }
 
 test_ammend_commit_with_two_red_steps() {
