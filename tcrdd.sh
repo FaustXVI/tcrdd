@@ -29,14 +29,18 @@ function setMessage() {
     fi
 }
 
-# amend in case of test refactoring (last commit is red, same test)
-function commitOnRed() {
+function commit() {
     if lastCommitRed; then
         git commit --amend --no-edit --allow-empty-message
     else
         git commit --allow-empty-message -m ""
     fi && \
-    setMessage && \
+    setMessage
+}
+
+# amend in case of test refactoring (last commit is red, same test)
+function commitOnRed() {
+    commit &&\
     git update-ref ${RED_REF} HEAD
 }
 
@@ -44,12 +48,7 @@ function commitOnRed() {
 # in case if last commit was green commit with empty message (/?\ should refactoring have commit messages?)
 # remove any RED tag reference
 function commitOnGreen() {
-    if lastCommitRed; then
-        git commit --amend --no-edit --allow-empty-message
-    else
-        git commit --allow-empty-message -m ""
-    fi && \
-    setMessage && \
+    commit && \
     git update-ref -d ${RED_REF}
 }
 
