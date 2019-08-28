@@ -111,7 +111,7 @@ test_amend_commit_with_two_red_steps() {
     assertEquals 'Only one commit should exist' 1 "${nbCommits}"
 }
 
-test_amend_commit_with_two_red_steps() {
+test_amend_commit_with_one_red_step_then_one_green_step() {
     headHash=$(runAsAlice getHeadHash)
     echo content > ${aliceClone}/aFile
     runAsAlice ./tcrdd.sh -r false > /dev/null 2>&1
