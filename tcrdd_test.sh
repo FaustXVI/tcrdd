@@ -5,7 +5,7 @@ test_print_usage_when_no_test_command_given() {
     headHash=$(runAsAlice getHeadHash)
     echo content > ${aliceClone}/aFile
     startStatus=$(runAsAlice git status -s)
-    runAsAlice ./tcrdd.sh > /dev/null 2>&1
+    runAsAlice ./tcrdd.sh > $stdout
     status=$(runAsAlice git status -s)
     currentHash=$(runAsAlice getHeadHash)
     assertTrue 'Alice s code is not commited' '[ "$headHash" = "$currentHash" ]'
@@ -44,6 +44,7 @@ oneTimeSetUp() {
     bareRepository="${SHUNIT_TMPDIR}/repository"
     aliceClone="${SHUNIT_TMPDIR}/alice"
     bobClone="${SHUNIT_TMPDIR}/bob"
+    stdout="${SHUNIT_TMPDIR}/stdout"
 }
 
 setUp() {
@@ -52,6 +53,7 @@ setUp() {
 
 tearDown() {
     deleteRepositories > /dev/null 2>&1
+    rm -f $stdout
 }
 
 . ./shunit2/shunit2
