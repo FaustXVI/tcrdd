@@ -115,11 +115,7 @@ done
 shift $((OPTIND -1))
 
 CMD="$@"
-if [ -z "$CMD" ]
-then
-    usage
-fi
-if [ -z "$TEST_KEYWORD" ]
+if [ -z "$CMD" ] || [ -z "$TEST_KEYWORD" ]
 then
     usage
 fi
