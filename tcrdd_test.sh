@@ -8,8 +8,10 @@ test_print_usage_when_no_test_command_given() {
     runAsAlice ./tcrdd.sh > $stdout
     status=$(runAsAlice git status -s)
     currentHash=$(runAsAlice getHeadHash)
+    stdoutContent=$(cat $stdout)
     assertTrue 'Alice s code is not commited' '[ "$headHash" = "$currentHash" ]'
     assertTrue "Nothing should have changed for git, was \"$status\" expected \"$startStatus\"" '[ "$startStatus" = "$status" ]'
+    assertTrue "" '[[ "$stdoutContent" =~ "Usage :" ]]'
 }
 
 test_commits_when_tests_are_ok() {

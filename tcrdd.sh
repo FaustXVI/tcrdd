@@ -4,6 +4,7 @@ MESSAGE=""
 
 function usage() {
     cat << EOF
+Usage :
 $0 [-g|-r] testCommand and arguments
 The TEST_KEYWORD environment variable is assumed to be set to a regex that, when present in the added code, means a test was just added
 EOF
