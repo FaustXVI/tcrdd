@@ -191,7 +191,6 @@ test_commits_with_message_on_red() {
 oneTimeSetUp() {
     export HOME="${SHUNIT_TMPDIR}"
     workingDirectory=`pwd`
-    tcrdd="${workingDirectory}/tcrdd.sh"
     bareRepository="${SHUNIT_TMPDIR}/repository"
     aliceClone="${SHUNIT_TMPDIR}/alice"
     bobClone="${SHUNIT_TMPDIR}/bob"
