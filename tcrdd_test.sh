@@ -88,6 +88,14 @@ test_auto_detects_red_step_with_new_test_file() {
     assertFalse 'Alice s code should be commited' '[ "$headHash" = "$currentHash" ]'
 }
 
+test_auto_detects_green_step_when_no_new_test() {
+    headHash=$(runAsAlice getHeadHash)
+    echo content > ${aliceClone}/aFile
+    runAsAlice ./tcrdd.sh true 
+    currentHash=$(runAsAlice getHeadHash)
+    assertFalse 'Alice s code should be commited' '[ "$headHash" = "$currentHash" ]'
+}
+
 oneTimeSetUp() {
     export HOME="${SHUNIT_TMPDIR}"
     workingDirectory=`pwd`
