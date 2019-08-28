@@ -177,6 +177,8 @@ test_commits_with_message_on_red() {
     assertEquals 'Alice commit message should not be empty' "$message" "Commit message"
 }
 
+# TODO : test pull functionality
+
 oneTimeSetUp() {
     export HOME="${SHUNIT_TMPDIR}"
     workingDirectory=`pwd`
