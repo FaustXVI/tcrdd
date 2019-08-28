@@ -78,6 +78,30 @@ test_reverts_when_test_are_ko() {
     assertFalse 'Created file should be removed' '[ -f ${aliceClone}/aFile ]'
 }
 
+test_reverts_removes_new_files_when_test_are_ko() {
+    headHash=$(runAsAlice getHeadHash)
+    echo content > ${aliceClone}/aFile
+    runAsAlice ./tcrdd.sh -g false > /dev/null 2>&1
+    status=$(runAsAlice git status -s)
+    currentHash=$(runAsAlice getHeadHash)
+    assertNull 'Alice s code is not reverted' "$status"
+    assertEquals 'Alice head should be the same as before' "$headHash" "$currentHash"
+    assertFalse 'Created file should be removed' '[ -f ${aliceClone}/aFile ]'
+}
+
+test_reverts_restores_files_when_test_are_ko() {
+    headHash=$(runAsAlice getHeadHash)
+    echo content > ${aliceClone}/aFile
+    runAsAlice ./tcrdd.sh -g true > /dev/null 2>&1
+    echo otherContent >> ${aliceClone}/aFile
+    runAsAlice ./tcrdd.sh -g false > /dev/null 2>&1
+    status=$(runAsAlice git status -s)
+    content=$(runAsAlice cat aFile)
+    currentHash=$(runAsAlice getHeadHash)
+    assertNull 'Alice s code should be reverted' "$status"
+    assertEquals 'File content should be reverted' "content" "$content"
+}
+
 test_commits_no_push_on_red_when_assumed_red() {
     headHash=$(runAsAlice getHeadHash)
     echo content > ${aliceClone}/aFile
