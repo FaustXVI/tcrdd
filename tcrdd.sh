@@ -31,11 +31,14 @@ function setMessage() {
 
 function commit() {
     if lastCommitRed; then
-        git commit --amend --no-edit --allow-empty-message
+        if [ ! -z "$MESSAGE" ]; then
+            git commit --amend --no-edit -m "$MESSAGE"
+        else
+            git commit --amend --no-edit --allow-empty-message
+        fi
     else
-        git commit --allow-empty-message -m ""
-    fi && \
-    setMessage
+        git commit --allow-empty-message -m "$MESSAGE"
+    fi
 }
 
 # amend in case of test refactoring (last commit is red, same test)
