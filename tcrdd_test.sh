@@ -14,6 +14,20 @@ test_print_usage_when_no_test_command_given() {
     assertTrue "" '[[ "$stdoutContent" =~ "Usage :" ]]'
 }
 
+test_print_usage_when_no_test_keyword_present() {
+    unset TEST_KEYWORD
+    headHash=$(runAsAlice getHeadHash)
+    echo content > ${aliceClone}/aFile
+    startStatus=$(runAsAlice git status -s)
+    runAsAlice ./tcrdd.sh true > $stdout
+    status=$(runAsAlice git status -s)
+    currentHash=$(runAsAlice getHeadHash)
+    stdoutContent=$(cat $stdout)
+    assertTrue 'Alice s code is not commited' '[ "$headHash" = "$currentHash" ]'
+    assertTrue "Nothing should have changed for git, was \"$status\" expected \"$startStatus\"" '[ "$startStatus" = "$status" ]'
+    assertTrue "" '[[ "$stdoutContent" =~ "Usage :" ]]'
+}
+
 test_commits_when_tests_are_ok() {
     headHash=$(runAsAlice getHeadHash)
     echo content > ${aliceClone}/aFile
@@ -40,7 +54,6 @@ test_reverts_when_test_are_ko() {
 
 oneTimeSetUp() {
     export HOME="${SHUNIT_TMPDIR}"
-    export TEST_KEYWORD="testKeyWord"
     workingDirectory=`pwd`
     tcrdd="${workingDirectory}/tcrdd.sh"
     bareRepository="${SHUNIT_TMPDIR}/repository"
@@ -50,6 +63,7 @@ oneTimeSetUp() {
 }
 
 setUp() {
+    export TEST_KEYWORD="testKeyWord"
     createRepositories > /dev/null 2>&1
 }
 
