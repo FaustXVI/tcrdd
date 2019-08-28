@@ -61,7 +61,6 @@ function lastCommitRed(){
 # revert to the last version that was committed
 function revert() {
     git reset --hard
-    git clean -f
 }
 
 # pull branch if there's a remote change
