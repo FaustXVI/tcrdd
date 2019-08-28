@@ -103,11 +103,12 @@ test_ammend_commit_with_two_red_steps() {
     echo otherContent >> ${aliceClone}/aFile
     runAsAlice ./tcrdd.sh -r false > /dev/null 2>&1
     status=$(runAsAlice git status -s)
-    nbCommits=$(runAsAlice git rev-list ${headHash}..HEAD)
+    nbCommits=$(runAsAlice git rev-list --count ${headHash}..HEAD)
     currentHash=$(runAsAlice getHeadHash)
     originHash=$(runAsAlice getOriginHeadHash)
     assertTrue 'Not everything is committed by alice' '[ -z "$status" ]'
     assertFalse 'Alice s should not be pushed' '[ "$originHash" = "$currentHash" ]'
+    assertEquals 'Only one commit should exist' "1" "${nbCommits}"
 }
 
 oneTimeSetUp() {
