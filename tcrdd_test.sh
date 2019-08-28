@@ -163,6 +163,15 @@ test_amend_commit_with_one_red_step_then_one_green_step() {
     assertEquals 'Only one commit should exist' 1 "${nbCommits}"
 }
 
+test_amend_commit_with_message() {
+    echo content > ${aliceClone}/aFile
+    runAsAlice ./tcrdd.sh -r false > /dev/null 2>&1
+    echo otherContent >> ${aliceClone}/aFile
+    runAsAlice ./tcrdd.sh -g -m "Commit message" true > /dev/null 2>&1
+    message=$(runAsAlice getHeadMessage)
+    assertEquals 'Alice commit message should not be empty' "$message" "Commit message"
+}
+
 test_commits_with_message_on_green() {
     echo content > ${aliceClone}/aFile
     runAsAlice ./tcrdd.sh -g -m "Commit message" true > /dev/null 2>&1
