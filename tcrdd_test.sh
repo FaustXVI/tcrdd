@@ -26,8 +26,9 @@ test_reverts_when_test_are_ko() {
 }
 
 oneTimeSetUp() {
-    workingDirectory=`pwd`
     export HOME="${SHUNIT_TMPDIR}"
+    export TEST_KEYWORD="testKeyWord"
+    workingDirectory=`pwd`
     tcrdd="${workingDirectory}/tcrdd.sh"
     bareRepository="${SHUNIT_TMPDIR}/repository"
     aliceClone="${SHUNIT_TMPDIR}/alice"
