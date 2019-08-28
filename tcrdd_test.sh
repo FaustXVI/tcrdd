@@ -49,8 +49,8 @@ test_reverts_on_green_when_assumed_red() {
     runAsAlice ./tcrdd.sh -r true > /dev/null 2>&1
     status=$(runAsAlice git status -s)
     currentHash=$(runAsAlice getHeadHash)
-    assertTrue 'Alice s code is not reverted' '[ -z "$status" ]'
-    assertTrue 'Alice head should be the same as before' '[ "$headHash" = "$currentHash" ]'
+    assertNull 'Alice s code is not reverted' "$status"
+    assertEquals 'Alice head should be the same as before' "$headHash" "$currentHash"
     assertFalse 'Created file should be removed' '[ -f ${aliceClone}/aFile ]'
 }
 
