@@ -137,7 +137,7 @@ test_commits_with_message_on_red() {
     echo content > ${aliceClone}/aFile
     runAsAlice ./tcrdd.sh -r -m "Commit message" false > /dev/null 2>&1
     message=$(runAsAlice getHeadMessage)
-    assertEquals 'Alice commit message should be empty' "$message" "Commit message"
+    assertEquals 'Alice commit message should not be empty' "$message" "Commit message"
 }
 
 oneTimeSetUp() {
