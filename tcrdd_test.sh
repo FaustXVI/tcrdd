@@ -96,6 +96,20 @@ test_auto_detects_green_step_when_no_new_test() {
     assertFalse 'Alice s code should be commited' '[ "$headHash" = "$currentHash" ]'
 }
 
+test_ammend_commit_with_two_red_steps() {
+    headHash=$(runAsAlice getHeadHash)
+    echo content > ${aliceClone}/aFile
+    runAsAlice ./tcrdd.sh -r false > /dev/null 2>&1
+    echo otherContent >> ${aliceClone}/aFile
+    runAsAlice ./tcrdd.sh -r false > /dev/null 2>&1
+    status=$(runAsAlice git status -s)
+    nbCommits=$(runAsAlice git rev-list ${headHash}..HEAD)
+    currentHash=$(runAsAlice getHeadHash)
+    originHash=$(runAsAlice getOriginHeadHash)
+    assertTrue 'Not everything is committed by alice' '[ -z "$status" ]'
+    assertFalse 'Alice s should not be pushed' '[ "$originHash" = "$currentHash" ]'
+}
+
 oneTimeSetUp() {
     export HOME="${SHUNIT_TMPDIR}"
     workingDirectory=`pwd`
