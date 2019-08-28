@@ -107,7 +107,7 @@ test_ammend_commit_with_two_red_steps() {
     currentHash=$(runAsAlice getHeadHash)
     originHash=$(runAsAlice getOriginHeadHash)
     assertTrue 'Not everything is committed by alice' '[ -z "$status" ]'
-    assertFalse 'Alice s should not be pushed' '[ "$originHash" = "$currentHash" ]'
+    assertNotEquals 'Alice s should not be pushed' "$originHash" "$currentHash" 
     assertEquals 'Only one commit should exist' "1" "${nbCommits}"
 }
 
