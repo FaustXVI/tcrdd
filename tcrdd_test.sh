@@ -65,17 +65,19 @@ test_reverts_when_test_are_ko() {
     assertFalse 'Created file should be removed' '[ -f ${aliceClone}/aFile ]'
 }
 
-test_commits_on_red_when_assumed_red() {
+test_commits_no_push_on_red_when_assumed_red() {
     headHash=$(runAsAlice getHeadHash)
     echo content > ${aliceClone}/aFile
     runAsAlice ./tcrdd.sh -r false > /dev/null 2>&1
     status=$(runAsAlice git status -s)
     message=$(runAsAlice getHeadMessage)
     currentHash=$(runAsAlice getHeadHash)
+    originHash=$(runAsAlice getOriginHeadHash)
     assertFalse 'Alice s code is not commited' '[ "$headHash" = "$currentHash" ]'
     assertTrue 'Not everything is committed by alice' '[ -z "$status" ]'
     assertTrue 'Alice commit message should be empty' '[ -z "$message" ]'
     assertTrue 'Created file should still be there' '[ -f ${aliceClone}/aFile ]'
+    assertFalse 'Alice s should not be pushed' '[ "$originHash" = "$currentHash" ]'
 }
 
 oneTimeSetUp() {
