@@ -3,12 +3,13 @@
 
 test_print_usage_when_no_test_command_given() {
     headHash=$(runAsAlice getHeadHash)
-    startStatus=$(runAsAlice git status -s)
     echo content > ${aliceClone}/aFile
+    startStatus=$(runAsAlice git status -s)
     runAsAlice ./tcrdd.sh > /dev/null 2>&1
     status=$(runAsAlice git status -s)
     currentHash=$(runAsAlice getHeadHash)
     assertTrue 'Alice s code is not commited' '[ "$headHash" = "$currentHash" ]'
+    assertTrue "Nothing should have changed for git, was \"$status\" expected \"$startStatus\"" '[ "$startStatus" = "$status" ]'
 }
 
 test_commits_when_tests_are_ok() {
