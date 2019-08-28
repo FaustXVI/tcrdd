@@ -106,7 +106,7 @@ test_ammend_commit_with_two_red_steps() {
     nbCommits=$(runAsAlice git rev-list --count ${headHash}..HEAD)
     currentHash=$(runAsAlice getHeadHash)
     originHash=$(runAsAlice getOriginHeadHash)
-    assertTrue 'Not everything is committed by alice' '[ -z "$status" ]'
+    assertNull 'Not everything is committed by alice' "$status"
     assertNotEquals 'Alice s should not be pushed' "$originHash" "$currentHash" 
     assertEquals 'Only one commit should exist' "1" "${nbCommits}"
 }
