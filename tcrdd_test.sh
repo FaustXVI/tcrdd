@@ -111,6 +111,21 @@ test_ammend_commit_with_two_red_steps() {
     assertEquals 'Only one commit should exist' "1" "${nbCommits}"
 }
 
+test_ammend_commit_with_two_red_steps() {
+    headHash=$(runAsAlice getHeadHash)
+    echo content > ${aliceClone}/aFile
+    runAsAlice ./tcrdd.sh -r false > /dev/null 2>&1
+    echo otherContent >> ${aliceClone}/aFile
+    runAsAlice ./tcrdd.sh -g true > /dev/null 2>&1
+    status=$(runAsAlice git status -s)
+    nbCommits=$(runAsAlice git rev-list --count ${headHash}..HEAD)
+    currentHash=$(runAsAlice getHeadHash)
+    originHash=$(runAsAlice getOriginHeadHash)
+    assertNull 'Everything should be committed by alice' "$status"
+    assertEquals 'Alice s should be pushed' "$originHash" "$currentHash" 
+    assertEquals 'Only one commit should exist' 1 "${nbCommits}"
+}
+
 oneTimeSetUp() {
     export HOME="${SHUNIT_TMPDIR}"
     workingDirectory=`pwd`
