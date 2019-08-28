@@ -43,3 +43,7 @@ getHeadHash() {
 getHeadMessage() {
     git log -1 --pretty=%B
 }
+
+getOriginHeadHash() {
+    git log origin/master -1 --pretty=%H
+}
