@@ -1,6 +1,19 @@
 #! /usr/bin/env bash
 . ./test_utils.sh
 
+test_print_usage_when_asked() {
+    headHash=$(runAsAlice getHeadHash)
+    echo content > ${aliceClone}/aFile
+    startStatus=$(runAsAlice git status -s)
+    runAsAlice ./tcrdd.sh -h true > $stdout
+    status=$(runAsAlice git status -s)
+    currentHash=$(runAsAlice getHeadHash)
+    stdoutContent=$(cat $stdout)
+    assertEquals 'Alice s code should not be commited' "$headHash" "$currentHash"
+    assertEquals "Nothing should have changed for git" "$startStatus" "$status"
+    assertContains "Usage should be displayed" "$stdoutContent" "Usage :"
+}
+
 test_print_usage_when_no_test_command_given() {
     headHash=$(runAsAlice getHeadHash)
     echo content > ${aliceClone}/aFile
