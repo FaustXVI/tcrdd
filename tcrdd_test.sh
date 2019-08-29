@@ -186,6 +186,23 @@ test_commits_with_message_on_red() {
     assertEquals 'Alice commit message should not be empty' "$message" "Commit message"
 }
 
+test_pull_code_on_green() {
+    headHash=$(runAsAlice getHeadHash)
+    
+    echo content > ${bobClone}/aFile
+    runAsBob git add . > /dev/null 2>&1
+    runAsBob git commit -m "bob commit" > /dev/null 2>&1
+    runAsBob git push > /dev/null 2>&1
+    bobHash=$(runAsBob getHeadHash)
+
+    echo otherContent >> ${aliceClone}/otherFile
+    runAsAlice ./tcrdd.sh -g true > /dev/null 2>&1
+    commitsSinceBob=$(runAsAlice git rev-list --count ${bobHash}..HEAD)
+    currentHash=$(runAsAlice getHeadHash)
+    originHash=$(runAsAlice getOriginHeadHash)
+    assertNull 'Everything should be committed by alice' "$status"
+    assertEquals 'Bob s code should be pulled' 1 "${commitsSinceBob}"
+}
 # TODO : test pull functionality
 
 oneTimeSetUp() {
