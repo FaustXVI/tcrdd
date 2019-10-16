@@ -6,18 +6,12 @@ function usage() {
     cat << EOF
 Usage :
 $0 [-g|-r] testCommand and arguments
-The TEST_KEYWORD environment variable is assumed to be set to a regex that, when present in the added code, means a test was just added
 EOF
     exit -1
 }
 
 function runTest() {
    $CMD
-}
-
-# look for a new test in a + line in the diff
-function testJustAdded(){
-    [[ ! -z `git diff HEAD | grep "^\+.*${TEST_KEYWORD}"` ]]
 }
 
 RED_REF=refs/isRed
@@ -113,13 +107,11 @@ then
 fi
 
 git add .
-if ${ASSUMING_RED} || (! ${ASSUMING_GREEN} && testJustAdded)
+if ${ASSUMING_RED}
 then
-    echo red
     runTest && revert || commitOnRed
     pull
 else
-    echo green
     runTest && commitOnGreen || revert
     pull && push
 fi

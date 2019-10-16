@@ -117,22 +117,6 @@ test_commits_no_push_on_red_when_assumed_red() {
     assertNotEquals 'Alice s should not be pushed' "$originHash" "$currentHash"
 }
 
-test_auto_detects_red_step_with_new_test_file() {
-    headHash=$(runAsAlice getHeadHash)
-    echo "${TEST_KEYWORD} content" > ${aliceClone}/aFile
-    runAsAlice ./tcrdd.sh false > /dev/null 2>&1
-    currentHash=$(runAsAlice getHeadHash)
-    assertNotEquals 'Alice s code should be commited' "$headHash" "$currentHash"
-}
-
-test_auto_detects_green_step_when_no_new_test() {
-    headHash=$(runAsAlice getHeadHash)
-    echo content > ${aliceClone}/aFile
-    runAsAlice ./tcrdd.sh true > /dev/null 2>&1
-    currentHash=$(runAsAlice getHeadHash)
-    assertNotEquals 'Alice s code should be commited' "$headHash" "$currentHash"
-}
-
 test_amend_commit_with_two_red_steps() {
     headHash=$(runAsAlice getHeadHash)
     echo content > ${aliceClone}/aFile
