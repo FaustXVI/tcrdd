@@ -101,7 +101,7 @@ done
 shift $((OPTIND -1))
 
 CMD="$@"
-if [ -z "$CMD" ] || [ -z "$TEST_KEYWORD" ]
+if [ -z "$CMD" ]
 then
     usage
 fi

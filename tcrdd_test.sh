@@ -27,20 +27,6 @@ test_print_usage_when_no_test_command_given() {
     assertContains "Usage should be displayed" "$stdoutContent" "Usage :"
 }
 
-test_print_usage_when_no_test_keyword_present() {
-    unset TEST_KEYWORD
-    headHash=$(runAsAlice getHeadHash)
-    echo content > ${aliceClone}/aFile
-    startStatus=$(runAsAlice git status -s)
-    runAsAlice ./tcrdd.sh true > $stdout
-    status=$(runAsAlice git status -s)
-    currentHash=$(runAsAlice getHeadHash)
-    stdoutContent=$(cat $stdout)
-    assertEquals 'Alice s code should not be commited' "$headHash" "$currentHash"
-    assertEquals "Nothing should have changed for git" "$startStatus" "$status"
-    assertContains "Usage should be displayed" "$stdoutContent" "Usage :"
-}
-
 test_commits_push_when_tests_are_ok() {
     headHash=$(runAsAlice getHeadHash)
     echo content > ${aliceClone}/aFile
@@ -199,7 +185,6 @@ oneTimeSetUp() {
 }
 
 setUp() {
-    export TEST_KEYWORD="testKeyWord"
     createRepositories > /dev/null 2>&1
 }
 
