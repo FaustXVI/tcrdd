@@ -170,7 +170,23 @@ test_pull_code_on_green() {
     commitsSinceBob=$(runAsAlice git rev-list --count ${bobHash}..HEAD)
     currentHash=$(runAsAlice getHeadHash)
     originHash=$(runAsAlice getOriginHeadHash)
-    assertNull 'Everything should be committed by alice' "$status"
+    assertEquals 'Bob s code should be pulled' 1 "${commitsSinceBob}"
+}
+
+test_pull_code_on_red() {
+    headHash=$(runAsAlice getHeadHash)
+    
+    echo content > ${bobClone}/aFile
+    runAsBob git add . > /dev/null 2>&1
+    runAsBob git commit -m "bob commit" > /dev/null 2>&1
+    runAsBob git push > /dev/null 2>&1
+    bobHash=$(runAsBob getHeadHash)
+
+    echo otherContent >> ${aliceClone}/otherFile
+    runAsAlice ./tcrdd.sh -r false > /dev/null 2>&1
+    commitsSinceBob=$(runAsAlice git rev-list --count ${bobHash}..HEAD)
+    currentHash=$(runAsAlice getHeadHash)
+    originHash=$(runAsAlice getOriginHeadHash)
     assertEquals 'Bob s code should be pulled' 1 "${commitsSinceBob}"
 }
 
