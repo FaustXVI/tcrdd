@@ -18,4 +18,11 @@ in stdenv.mkDerivation {
 
 # Usage
 
-tcrdd [-g|-r]
+```
+tcrdd [options...] testCommand [arguments...]
+
+Options:
+    -g                  assume the tests will pass (green)
+    -r                  assume the tests will fail (red)
+    -m MESSAGE          use the provided commit message
+```
