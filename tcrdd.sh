@@ -21,7 +21,7 @@ function commit() {
         if [ ! -z "$MESSAGE" ]; then
             git commit --amend --no-edit -m "$MESSAGE"
         else
-            git commit --amend --no-edit --allow-empty-message
+            git commit --amend --no-edit --allow-empty-message -m "$MESSAGE"
         fi
     else
         git commit --allow-empty-message -m "$MESSAGE"
