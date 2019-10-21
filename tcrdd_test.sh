@@ -186,6 +186,8 @@ test_pull_code_on_red() {
 
     echo otherContent >> ${aliceClone}/otherFile
     runAsAlice ./tcrdd.sh -r false > /dev/null 2>&1
+    searchBobCommit=$(runAsAlice git log --pretty=%H | grep ${bobHash})
+    assertNotNull 'Bob s code should be found' "${searchBobCommit}"
     commitsSinceBob=$(runAsAlice git rev-list --count ${bobHash}..HEAD)
     currentHash=$(runAsAlice getHeadHash)
     originHash=$(runAsAlice getOriginHeadHash)
