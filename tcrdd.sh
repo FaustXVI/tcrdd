@@ -5,7 +5,12 @@ MESSAGE=""
 function usage() {
     cat << EOF
 Usage :
-$0 [-g|-r] testCommand and arguments
+$0 [options...] testCommand [arguments...]
+
+Options:
+    -g                  assume the tests will pass (green)
+    -r                  assume the tests will fail (red)
+    -m MESSAGE          use the provided commit message
 EOF
     exit -1
 }
