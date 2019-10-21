@@ -37,11 +37,11 @@ deleteRepositories() {
 }
 
 getHeadHash() {
-    git log -1 --pretty=%H
+    git log HEAD -1 --pretty=%H
 }
 
 getHeadMessage() {
-    git log -1 --pretty=%B
+    git log HEAD -1 --pretty=%B
 }
 
 getOriginHeadHash() {
