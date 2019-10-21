@@ -173,7 +173,6 @@ test_pull_code_on_green() {
     assertNull 'Everything should be committed by alice' "$status"
     assertEquals 'Bob s code should be pulled' 1 "${commitsSinceBob}"
 }
-# TODO : test pull functionality
 
 oneTimeSetUp() {
     export HOME="${SHUNIT_TMPDIR}"
