@@ -18,11 +18,7 @@ RED_REF=refs/isRed
 
 function commit() {
     if lastCommitRed; then
-        if [ ! -z "$MESSAGE" ]; then
-            git commit --amend --no-edit -m "$MESSAGE"
-        else
-            git commit --amend --no-edit --allow-empty-message -m "$MESSAGE"
-        fi
+        git commit --amend --no-edit --allow-empty-message -m "$MESSAGE"
     else
         git commit --allow-empty-message -m "$MESSAGE"
     fi
