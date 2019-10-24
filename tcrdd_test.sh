@@ -5,7 +5,7 @@ test_print_usage_when_asked() {
     headHash=$(runAsAlice getHeadHash)
     echo content > ${aliceClone}/aFile
     startStatus=$(runAsAlice git status -s)
-    runAsAlice ./tcrdd.sh -h true > $stdout
+    runAsAlice ./tcrdd.sh --help true > $stdout
     status=$(runAsAlice git status -s)
     currentHash=$(runAsAlice getHeadHash)
     stdoutContent=$(cat $stdout)
@@ -30,7 +30,7 @@ test_print_usage_when_no_test_command_given() {
 test_commits_push_when_tests_are_ok() {
     headHash=$(runAsAlice getHeadHash)
     echo content > ${aliceClone}/aFile
-    runAsAlice ./tcrdd.sh -g true > /dev/null 2>&1
+    runAsAlice ./tcrdd.sh --green true > /dev/null 2>&1
     status=$(runAsAlice git status -s)
     message=$(runAsAlice getHeadMessage)
     currentHash=$(runAsAlice getHeadHash)
@@ -45,7 +45,7 @@ test_commits_push_when_tests_are_ok() {
 test_reverts_on_green_when_assumed_red() {
     headHash=$(runAsAlice getHeadHash)
     echo content > ${aliceClone}/aFile
-    runAsAlice ./tcrdd.sh -r true > /dev/null 2>&1
+    runAsAlice ./tcrdd.sh --red true > /dev/null 2>&1
     status=$(runAsAlice git status -s)
     currentHash=$(runAsAlice getHeadHash)
     assertNull 'Alice s code is not reverted' "$status"
@@ -56,7 +56,7 @@ test_reverts_on_green_when_assumed_red() {
 test_reverts_when_test_are_ko() {
     headHash=$(runAsAlice getHeadHash)
     echo content > ${aliceClone}/aFile
-    runAsAlice ./tcrdd.sh -g false > /dev/null 2>&1
+    runAsAlice ./tcrdd.sh --green false > /dev/null 2>&1
     status=$(runAsAlice git status -s)
     currentHash=$(runAsAlice getHeadHash)
     assertNull 'Alice s code is not reverted' "$status"
@@ -67,7 +67,7 @@ test_reverts_when_test_are_ko() {
 test_reverts_removes_new_files_when_test_are_ko() {
     headHash=$(runAsAlice getHeadHash)
     echo content > ${aliceClone}/aFile
-    runAsAlice ./tcrdd.sh -g false > /dev/null 2>&1
+    runAsAlice ./tcrdd.sh --green false > /dev/null 2>&1
     status=$(runAsAlice git status -s)
     currentHash=$(runAsAlice getHeadHash)
     assertNull 'Alice s code is not reverted' "$status"
@@ -78,9 +78,9 @@ test_reverts_removes_new_files_when_test_are_ko() {
 test_reverts_restores_files_when_test_are_ko() {
     headHash=$(runAsAlice getHeadHash)
     echo content > ${aliceClone}/aFile
-    runAsAlice ./tcrdd.sh -g true > /dev/null 2>&1
+    runAsAlice ./tcrdd.sh --green true > /dev/null 2>&1
     echo otherContent >> ${aliceClone}/aFile
-    runAsAlice ./tcrdd.sh -g false > /dev/null 2>&1
+    runAsAlice ./tcrdd.sh --green false > /dev/null 2>&1
     status=$(runAsAlice git status -s)
     content=$(runAsAlice cat aFile)
     currentHash=$(runAsAlice getHeadHash)
@@ -91,7 +91,7 @@ test_reverts_restores_files_when_test_are_ko() {
 test_commits_no_push_on_red_when_assumed_red() {
     headHash=$(runAsAlice getHeadHash)
     echo content > ${aliceClone}/aFile
-    runAsAlice ./tcrdd.sh -r false > /dev/null 2>&1
+    runAsAlice ./tcrdd.sh --red false > /dev/null 2>&1
     status=$(runAsAlice git status -s)
     message=$(runAsAlice getHeadMessage)
     currentHash=$(runAsAlice getHeadHash)
@@ -106,9 +106,9 @@ test_commits_no_push_on_red_when_assumed_red() {
 test_amend_commit_with_two_red_steps() {
     headHash=$(runAsAlice getHeadHash)
     echo content > ${aliceClone}/aFile
-    runAsAlice ./tcrdd.sh -r false > /dev/null 2>&1
+    runAsAlice ./tcrdd.sh --red false > /dev/null 2>&1
     echo otherContent >> ${aliceClone}/aFile
-    runAsAlice ./tcrdd.sh -r false > /dev/null 2>&1
+    runAsAlice ./tcrdd.sh --red false > /dev/null 2>&1
     status=$(runAsAlice git status -s)
     nbCommits=$(runAsAlice git rev-list --count ${headHash}..HEAD)
     currentHash=$(runAsAlice getHeadHash)
@@ -121,9 +121,9 @@ test_amend_commit_with_two_red_steps() {
 test_amend_commit_with_one_red_step_then_one_green_step() {
     headHash=$(runAsAlice getHeadHash)
     echo content > ${aliceClone}/aFile
-    runAsAlice ./tcrdd.sh -r false > /dev/null 2>&1
+    runAsAlice ./tcrdd.sh --red false > /dev/null 2>&1
     echo otherContent >> ${aliceClone}/aFile
-    runAsAlice ./tcrdd.sh -g true > /dev/null 2>&1
+    runAsAlice ./tcrdd.sh --green true > /dev/null 2>&1
     status=$(runAsAlice git status -s)
     nbCommits=$(runAsAlice git rev-list --count ${headHash}..HEAD)
     currentHash=$(runAsAlice getHeadHash)
@@ -135,23 +135,23 @@ test_amend_commit_with_one_red_step_then_one_green_step() {
 
 test_amend_commit_with_message() {
     echo content > ${aliceClone}/aFile
-    runAsAlice ./tcrdd.sh -r false > /dev/null 2>&1
+    runAsAlice ./tcrdd.sh --red false > /dev/null 2>&1
     echo otherContent >> ${aliceClone}/aFile
-    runAsAlice ./tcrdd.sh -g -m "Commit message" true > /dev/null 2>&1
+    runAsAlice ./tcrdd.sh --green --message "Commit message" true > /dev/null 2>&1
     message=$(runAsAlice getHeadMessage)
     assertEquals 'Alice commit message should not be empty' "$message" "Commit message"
 }
 
 test_commits_with_message_on_green() {
     echo content > ${aliceClone}/aFile
-    runAsAlice ./tcrdd.sh -g -m "Commit message" true > /dev/null 2>&1
+    runAsAlice ./tcrdd.sh --green --message "Commit message" true > /dev/null 2>&1
     message=$(runAsAlice getHeadMessage)
     assertEquals 'Alice commit message should not be empty' "$message" "Commit message"
 }
 
 test_commits_with_message_on_red() {
     echo content > ${aliceClone}/aFile
-    runAsAlice ./tcrdd.sh -r -m "Commit message" false > /dev/null 2>&1
+    runAsAlice ./tcrdd.sh --red --message "Commit message" false > /dev/null 2>&1
     message=$(runAsAlice getHeadMessage)
     assertEquals 'Alice commit message should not be empty' "$message" "Commit message"
 }
@@ -166,7 +166,7 @@ test_pull_code_on_green() {
     bobHash=$(runAsBob getHeadHash)
 
     echo otherContent >> ${aliceClone}/otherFile
-    runAsAlice ./tcrdd.sh -g true > /dev/null 2>&1
+    runAsAlice ./tcrdd.sh --green true > /dev/null 2>&1
     searchBobCommit=$(runAsAlice git log --pretty=%H | grep ${bobHash})
     assertNotNull 'Bob s code should be found' "${searchBobCommit}"
     commitsSinceBob=$(runAsAlice git rev-list --count ${bobHash}..HEAD)
@@ -185,7 +185,7 @@ test_pull_code_on_red() {
     bobHash=$(runAsBob getHeadHash)
 
     echo otherContent >> ${aliceClone}/otherFile
-    runAsAlice ./tcrdd.sh -r false > /dev/null 2>&1
+    runAsAlice ./tcrdd.sh --red false > /dev/null 2>&1
     searchBobCommit=$(runAsAlice git log --pretty=%H | grep ${bobHash})
     assertNotNull 'Bob s code should be found' "${searchBobCommit}"
     commitsSinceBob=$(runAsAlice git rev-list --count ${bobHash}..HEAD)

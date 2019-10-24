@@ -8,9 +8,9 @@ Usage :
 $0 [options...] testCommand [arguments...]
 
 Options:
-    -g                  assume the tests will pass (green)
-    -r                  assume the tests will fail (red)
-    -m MESSAGE          use the provided commit message
+    -g, --green             assume the tests will pass
+    -r, --red               assume the tests will fail
+    -m, --message MESSAGE   use the provided commit message
 EOF
     exit -1
 }
@@ -80,26 +80,42 @@ function needsPush(){
 ASSUMING_GREEN=false
 ASSUMING_RED=false
 
-while getopts ":rghim:" opt; do
-  case ${opt} in
-    g )
+OPTIONS=`getopt -o grhm: --long green,red,help,message: -n "$(basename $0)" -- "$@"`
+
+eval set -- "${OPTIONS}"
+
+if [ $? != 0 ]
+then
+    usage
+fi
+
+while true; do
+  case $1 in
+    -g | --green )
       ASSUMING_GREEN=true
+      shift
       ;;
-    r )
+    -r | --red )
       ASSUMING_RED=true
+      shift
       ;;
-    h )
+    -h | --help )
       usage
+      shift
       ;;
-    m )
-      MESSAGE="${OPTARG}"
+    -m | --message )
+      MESSAGE="$2"
+      shift 2
       ;;
-    \? )
-      echo "Invalid option: $OPTARG" 1>&2
+    -- ) # Stop processing options
+      shift
+      break
+      ;;
+    * )
+      break
       ;;
   esac
 done
-shift $((OPTIND -1))
 
 CMD="$@"
 if [ -z "$CMD" ]
