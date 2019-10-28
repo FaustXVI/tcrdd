@@ -47,3 +47,6 @@ getHeadMessage() {
 getOriginHeadHash() {
     git log origin/master -1 --pretty=%H
 }
+
+and_tests_pass=true
+and_tests_fail=false
