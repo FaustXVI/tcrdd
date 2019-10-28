@@ -1,11 +1,12 @@
 #! /usr/bin/env bash
 . ./test_utils.sh
 
-test_print_usage_when_asked() {
+should_print_usage_when_given() {
+    arguments=$@
     headHash=$(runAsAlice getHeadHash)
     echo content > ${aliceClone}/aFile
     startStatus=$(runAsAlice git status -s)
-    runAsAlice ./tcrdd.sh --help true > $stdout
+    runAsAlice ./tcrdd.sh ${arguments} > $stdout
     status=$(runAsAlice git status -s)
     currentHash=$(runAsAlice getHeadHash)
     stdoutContent=$(cat $stdout)
@@ -14,23 +15,27 @@ test_print_usage_when_asked() {
     assertContains "Usage should be displayed" "$stdoutContent" "Usage :"
 }
 
-test_print_usage_when_no_test_command_given() {
-    headHash=$(runAsAlice getHeadHash)
-    echo content > ${aliceClone}/aFile
-    startStatus=$(runAsAlice git status -s)
-    runAsAlice ./tcrdd.sh > $stdout
-    status=$(runAsAlice git status -s)
-    currentHash=$(runAsAlice getHeadHash)
-    stdoutContent=$(cat $stdout)
-    assertEquals 'Alice s code should not be commited' "$headHash" "$currentHash"
-    assertEquals "Nothing should have changed for git" "$startStatus" "$status"
-    assertContains "Usage should be displayed" "$stdoutContent" "Usage :"
+test_print_usage_when_given_short_option() {
+    and_any_command=true
+    should_print_usage_when_given -h $and_any_command
 }
 
-test_commits_push_when_tests_are_ok() {
+test_print_usage_when_given_long_option() {
+    and_any_command=true
+    should_print_usage_when_given --help $and_any_command
+}
+
+test_print_usage_when_given_no_test_command() {
+    no_test_command=
+    should_print_usage_when_given $no_test_command
+}
+
+
+should_commit_and_push_when_given() {
+    arguments=$@
     headHash=$(runAsAlice getHeadHash)
     echo content > ${aliceClone}/aFile
-    runAsAlice ./tcrdd.sh --green true > /dev/null 2>&1
+    runAsAlice ./tcrdd.sh ${arguments} > /dev/null 2>&1
     status=$(runAsAlice git status -s)
     message=$(runAsAlice getHeadMessage)
     currentHash=$(runAsAlice getHeadHash)
@@ -42,10 +47,20 @@ test_commits_push_when_tests_are_ok() {
     assertEquals 'Alice s should be pushed' "$originHash" "$currentHash"
 }
 
-test_reverts_on_green_when_assumed_red() {
+test_commit_and_push_when_assumed_green_and_tests_pass__short_option() {
+    should_commit_and_push_when_given -g $and_tests_pass
+}
+
+test_commit_and_push_when_assumed_green_and_tests_pass__long_option() {
+    should_commit_and_push_when_given --green $and_tests_pass
+}
+
+
+should_revert_when_given() {
+    arguments=$@
     headHash=$(runAsAlice getHeadHash)
     echo content > ${aliceClone}/aFile
-    runAsAlice ./tcrdd.sh --red true > /dev/null 2>&1
+    runAsAlice ./tcrdd.sh ${arguments} > /dev/null 2>&1
     status=$(runAsAlice git status -s)
     currentHash=$(runAsAlice getHeadHash)
     assertNull 'Alice s code is not reverted' "$status"
@@ -53,10 +68,28 @@ test_reverts_on_green_when_assumed_red() {
     assertFalse 'Created file should be removed' '[ -f ${aliceClone}/aFile ]'
 }
 
-test_reverts_when_test_are_ko() {
+test_revert_when_assumed_red_and_tests_pass__short_option() {
+    should_revert_when_given -r $and_tests_pass
+}
+
+test_revert_when_assumed_red_and_tests_pass__long_option() {
+    should_revert_when_given --red $and_tests_pass
+}
+
+test_revert_when_assumed_green_and_tests_fail__short_option() {
+    should_revert_when_given -g $and_tests_fail
+}
+
+test_revert_when_assumed_green_and_tests_fail__long_option() {
+    should_revert_when_given --green $and_tests_fail
+}
+
+
+should_remove_untracked_files_when_given() {
+    arguments=$@
     headHash=$(runAsAlice getHeadHash)
     echo content > ${aliceClone}/aFile
-    runAsAlice ./tcrdd.sh --green false > /dev/null 2>&1
+    runAsAlice ./tcrdd.sh $arguments > /dev/null 2>&1
     status=$(runAsAlice git status -s)
     currentHash=$(runAsAlice getHeadHash)
     assertNull 'Alice s code is not reverted' "$status"
@@ -64,23 +97,22 @@ test_reverts_when_test_are_ko() {
     assertFalse 'Created file should be removed' '[ -f ${aliceClone}/aFile ]'
 }
 
-test_reverts_removes_new_files_when_test_are_ko() {
-    headHash=$(runAsAlice getHeadHash)
-    echo content > ${aliceClone}/aFile
-    runAsAlice ./tcrdd.sh --green false > /dev/null 2>&1
-    status=$(runAsAlice git status -s)
-    currentHash=$(runAsAlice getHeadHash)
-    assertNull 'Alice s code is not reverted' "$status"
-    assertEquals 'Alice head should be the same as before' "$headHash" "$currentHash"
-    assertFalse 'Created file should be removed' '[ -f ${aliceClone}/aFile ]'
+test_remove_untracked_files_when_assumed_green_and_tests_fail__short_option() {
+    should_remove_untracked_files_when_given -g $and_tests_fail
 }
 
-test_reverts_restores_files_when_test_are_ko() {
+test_remove_untracked_files_when_assumed_green_and_tests_fail__long_option() {
+    should_remove_untracked_files_when_given --green $and_tests_fail
+}
+
+
+should_restore_files_when_given() {
+    arguments=$@
     headHash=$(runAsAlice getHeadHash)
     echo content > ${aliceClone}/aFile
     runAsAlice ./tcrdd.sh --green true > /dev/null 2>&1
     echo otherContent >> ${aliceClone}/aFile
-    runAsAlice ./tcrdd.sh --green false > /dev/null 2>&1
+    runAsAlice ./tcrdd.sh ${arguments} > /dev/null 2>&1
     status=$(runAsAlice git status -s)
     content=$(runAsAlice cat aFile)
     currentHash=$(runAsAlice getHeadHash)
@@ -88,10 +120,20 @@ test_reverts_restores_files_when_test_are_ko() {
     assertEquals 'File content should be reverted' "content" "$content"
 }
 
-test_commits_no_push_on_red_when_assumed_red() {
+test_restore_files_when_assumed_green_and_tests_fail__short_option() {
+    should_restore_files_when_given -g $and_tests_fail
+}
+
+test_restore_files_when_assumed_green_and_tests_fail__long_option() {
+    should_restore_files_when_given --green $and_tests_fail
+}
+
+
+should_not_push_when_given() {
+    arguments=$@
     headHash=$(runAsAlice getHeadHash)
     echo content > ${aliceClone}/aFile
-    runAsAlice ./tcrdd.sh --red false > /dev/null 2>&1
+    runAsAlice ./tcrdd.sh ${arguments} > /dev/null 2>&1
     status=$(runAsAlice git status -s)
     message=$(runAsAlice getHeadMessage)
     currentHash=$(runAsAlice getHeadHash)
@@ -103,12 +145,22 @@ test_commits_no_push_on_red_when_assumed_red() {
     assertNotEquals 'Alice s should not be pushed' "$originHash" "$currentHash"
 }
 
-test_amend_commit_with_two_red_steps() {
+test_does_not_push_when_assumed_red_and_tests_fail__short_option() {
+    should_not_push_when_given -r $and_tests_fail
+}
+
+test_does_not_push_when_assumed_red_and_tests_fail__long_option() {
+    should_not_push_when_given --red $and_tests_fail
+}
+
+
+should_amend_commit_and_not_push_when_given() {
+    arguments=$@
     headHash=$(runAsAlice getHeadHash)
     echo content > ${aliceClone}/aFile
     runAsAlice ./tcrdd.sh --red false > /dev/null 2>&1
     echo otherContent >> ${aliceClone}/aFile
-    runAsAlice ./tcrdd.sh --red false > /dev/null 2>&1
+    runAsAlice ./tcrdd.sh ${arguments} > /dev/null 2>&1
     status=$(runAsAlice git status -s)
     nbCommits=$(runAsAlice git rev-list --count ${headHash}..HEAD)
     currentHash=$(runAsAlice getHeadHash)
@@ -118,7 +170,17 @@ test_amend_commit_with_two_red_steps() {
     assertEquals 'Only one commit should exist' 1 "${nbCommits}"
 }
 
-test_amend_commit_with_one_red_step_then_one_green_step() {
+test_amend_last_red_commit_when_assumed_red_and_tests_fail__short_option() {
+    should_amend_commit_and_not_push_when_given -r $and_tests_fail
+}
+
+test_amend_last_red_commit_when_assumed_red_and_tests_fail__long_option() {
+    should_amend_commit_and_not_push_when_given --red $and_tests_fail
+}
+
+
+should_amend_commit_and_push_when_given() {
+    arguments=$@
     headHash=$(runAsAlice getHeadHash)
     echo content > ${aliceClone}/aFile
     runAsAlice ./tcrdd.sh --red false > /dev/null 2>&1
@@ -129,8 +191,16 @@ test_amend_commit_with_one_red_step_then_one_green_step() {
     currentHash=$(runAsAlice getHeadHash)
     originHash=$(runAsAlice getOriginHeadHash)
     assertNull 'Everything should be committed by alice' "$status"
-    assertEquals 'Alice s should be pushed' "$originHash" "$currentHash" 
+    assertEquals 'Alice s should be pushed' "$originHash" "$currentHash"
     assertEquals 'Only one commit should exist' 1 "${nbCommits}"
+}
+
+test_amend_last_red_commit_and_push_when_assumed_green_and_tests_pass__short_option() {
+    should_amend_commit_and_push_when_given -g $and_tests_pass
+}
+
+test_amend_last_red_commit_and_push_when_assumed_green_and_tests_pass__long_option() {
+    should_amend_commit_and_push_when_given --green $and_tests_pass
 }
 
 test_amend_commit_with_message() {
@@ -142,21 +212,33 @@ test_amend_commit_with_message() {
     assertEquals 'Alice commit message should not be empty' "$message" "Commit message"
 }
 
-test_commits_with_message_on_green() {
+
+should_commit_with_message_when_given() {
     echo content > ${aliceClone}/aFile
-    runAsAlice ./tcrdd.sh --green --message "Commit message" true > /dev/null 2>&1
+    runAsAlice ./tcrdd.sh $1 $2 "$3" $4 > /dev/null 2>&1
     message=$(runAsAlice getHeadMessage)
     assertEquals 'Alice commit message should not be empty' "$message" "Commit message"
 }
 
-test_commits_with_message_on_red() {
-    echo content > ${aliceClone}/aFile
-    runAsAlice ./tcrdd.sh --red --message "Commit message" false > /dev/null 2>&1
-    message=$(runAsAlice getHeadMessage)
-    assertEquals 'Alice commit message should not be empty' "$message" "Commit message"
+test_commit_with_message_when_assumed_green_and_tests_pass__short_option() {
+    should_commit_with_message_when_given -g -m "Commit message" $and_tests_pass
 }
 
-test_pull_code_on_green() {
+test_commit_with_message_when_assumed_green_and_tests_pass__long_option() {
+    should_commit_with_message_when_given --green --message "Commit message" $and_tests_pass
+}
+
+test_commit_with_message_when_assumed_red_and_tests_fail__short_option() {
+    should_commit_with_message_when_given -r -m "Commit message" $and_tests_fail
+}
+
+test_commit_with_message_when_assumed_red_and_tests_fail__long_option() {
+    should_commit_with_message_when_given --red --message "Commit message" $and_tests_fail
+}
+
+
+should_pull_when_given() {
+    arguments=$@
     headHash=$(runAsAlice getHeadHash)
     
     echo content > ${bobClone}/aFile
@@ -166,7 +248,7 @@ test_pull_code_on_green() {
     bobHash=$(runAsBob getHeadHash)
 
     echo otherContent >> ${aliceClone}/otherFile
-    runAsAlice ./tcrdd.sh --green true > /dev/null 2>&1
+    runAsAlice ./tcrdd.sh ${arguments} > /dev/null 2>&1
     searchBobCommit=$(runAsAlice git log --pretty=%H | grep ${bobHash})
     assertNotNull 'Bob s code should be found' "${searchBobCommit}"
     commitsSinceBob=$(runAsAlice git rev-list --count ${bobHash}..HEAD)
@@ -175,24 +257,22 @@ test_pull_code_on_green() {
     assertEquals 'Bob s code should be pulled' 1 "${commitsSinceBob}"
 }
 
-test_pull_code_on_red() {
-    headHash=$(runAsAlice getHeadHash)
-    
-    echo content > ${bobClone}/aFile
-    runAsBob git add . > /dev/null 2>&1
-    runAsBob git commit -m "bob commit" > /dev/null 2>&1
-    runAsBob git push > /dev/null 2>&1
-    bobHash=$(runAsBob getHeadHash)
-
-    echo otherContent >> ${aliceClone}/otherFile
-    runAsAlice ./tcrdd.sh --red false > /dev/null 2>&1
-    searchBobCommit=$(runAsAlice git log --pretty=%H | grep ${bobHash})
-    assertNotNull 'Bob s code should be found' "${searchBobCommit}"
-    commitsSinceBob=$(runAsAlice git rev-list --count ${bobHash}..HEAD)
-    currentHash=$(runAsAlice getHeadHash)
-    originHash=$(runAsAlice getOriginHeadHash)
-    assertEquals 'Bob s code should be pulled' 1 "${commitsSinceBob}"
+test_pull_code_when_assumed_green_and_tests_pass__short_option() {
+    should_pull_when_given -g $and_tests_pass
 }
+
+test_pull_code_when_assumed_green_and_tests_pass__long_option() {
+    should_pull_when_given --green $and_tests_pass
+}
+
+test_pull_code_when_assumed_red_and_tests_fail__short_option() {
+    should_pull_when_given -r $and_tests_fail
+}
+
+test_pull_code_when_assumed_red_and_tests_fail__long_option() {
+    should_pull_when_given --red $and_tests_fail
+}
+
 
 oneTimeSetUp() {
     export HOME="${SHUNIT_TMPDIR}"
