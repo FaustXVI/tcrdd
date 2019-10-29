@@ -213,7 +213,7 @@ should_amend_commit_with_message_when_given() {
     runAsAlice ./tcrdd.sh "${arguments[@]}" > /dev/null 2>&1
     nbCommits=$(runAsAlice git rev-list --count ${headHash}..HEAD)
     message=$(runAsAlice getHeadMessage)
-    assertEquals 'Alice commit message should not be empty' "$message" "Commit message"
+    assertEquals 'Alice commit message should not be empty' "Commit message" "$message"
     assertEquals 'Only one commit should exist' 1 "${nbCommits}"
 }
 
@@ -231,7 +231,7 @@ should_commit_with_message_when_given() {
     echo content > ${aliceClone}/aFile
     runAsAlice ./tcrdd.sh "${arguments[@]}" > /dev/null 2>&1
     message=$(runAsAlice getHeadMessage)
-    assertEquals 'Alice commit message should not be empty' "$message" "Commit message"
+    assertEquals 'Alice commit message should not be empty' "Commit message" "$message"
 }
 
 test_commit_with_message_when_assumed_green_and_tests_pass__short_option() {
