@@ -209,7 +209,7 @@ should_amend_commit_with_message_when_given() {
     echo content > ${aliceClone}/aFile
     runAsAlice ./tcrdd.sh --red false > /dev/null 2>&1
     echo otherContent >> ${aliceClone}/aFile
-    runAsAlice ./tcrdd.sh $1 $2 "$3" $4 > /dev/null 2>&1
+    runAsAlice ./tcrdd.sh "$@" > /dev/null 2>&1
     nbCommits=$(runAsAlice git rev-list --count ${headHash}..HEAD)
     message=$(runAsAlice getHeadMessage)
     assertEquals 'Alice commit message should not be empty' "$message" "Commit message"
@@ -227,7 +227,7 @@ test_amend_commit_with_message_when_assumed_green_and_tests_pass__long_option() 
 
 should_commit_with_message_when_given() {
     echo content > ${aliceClone}/aFile
-    runAsAlice ./tcrdd.sh $1 $2 "$3" $4 > /dev/null 2>&1
+    runAsAlice ./tcrdd.sh "$@" > /dev/null 2>&1
     message=$(runAsAlice getHeadMessage)
     assertEquals 'Alice commit message should not be empty' "$message" "Commit message"
 }
