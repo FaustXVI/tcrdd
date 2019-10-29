@@ -153,6 +153,14 @@ test_does_not_push_when_assumed_red_and_tests_fail__long_option() {
     should_not_push_when_given --red $and_tests_fail
 }
 
+test_does_not_push_when_assumed_green_and_tests_pass_in_local_mode__short_option() {
+    should_not_push_when_given -l -g $and_tests_pass
+}
+
+test_does_not_push_when_assumed_green_and_tests_pass_in_local_mode__long_option() {
+    should_not_push_when_given --local --green $and_tests_pass
+}
+
 
 should_amend_commit_and_not_push_when_given() {
     arguments=("$@")
@@ -176,6 +184,14 @@ test_amend_last_red_commit_when_assumed_red_and_tests_fail__short_option() {
 
 test_amend_last_red_commit_when_assumed_red_and_tests_fail__long_option() {
     should_amend_commit_and_not_push_when_given --red $and_tests_fail
+}
+
+test_amend_last_red_commit_when_assumed_green_and_tests_pass_in_local_mode__short_option() {
+    should_amend_commit_and_not_push_when_given -l -g $and_tests_pass
+}
+
+test_amend_last_red_commit_when_assumed_green_and_tests_pass_in_local_mode__long_option() {
+    should_amend_commit_and_not_push_when_given --local --green $and_tests_pass
 }
 
 
@@ -266,8 +282,6 @@ should_pull_when_given() {
     searchBobCommit=$(runAsAlice git log --pretty=%H | grep ${bobHash})
     assertNotNull 'Bob s code should be found' "${searchBobCommit}"
     commitsSinceBob=$(runAsAlice git rev-list --count ${bobHash}..HEAD)
-    currentHash=$(runAsAlice getHeadHash)
-    originHash=$(runAsAlice getOriginHeadHash)
     assertEquals 'Bob s code should be pulled' 1 "${commitsSinceBob}"
 }
 
@@ -285,6 +299,39 @@ test_pull_code_when_assumed_red_and_tests_fail__short_option() {
 
 test_pull_code_when_assumed_red_and_tests_fail__long_option() {
     should_pull_when_given --red $and_tests_fail
+}
+
+
+should_not_pull_when_given() {
+    arguments=("$@")
+    headHash=$(runAsAlice getHeadHash)
+
+    echo content > ${bobClone}/aFile
+    runAsBob git add . > /dev/null 2>&1
+    runAsBob git commit -m "bob commit" > /dev/null 2>&1
+    runAsBob git push > /dev/null 2>&1
+    bobHash=$(runAsBob getHeadHash)
+
+    echo otherContent >> ${aliceClone}/otherFile
+    runAsAlice ./tcrdd.sh "${arguments[@]}" > /dev/null 2>&1
+    searchBobCommit=$(runAsAlice git log --pretty=%H | grep ${bobHash})
+    assertNull 'Bob s code should not be found' "${searchBobCommit}"
+}
+
+test_not_pull_code_when_assumed_green_and_tests_pass_in_local_mode__short_option() {
+    should_not_pull_when_given -l -g $and_tests_pass
+}
+
+test_not_pull_code_when_assumed_green_and_tests_pass_in_local_mode__long_option() {
+    should_not_pull_when_given --local --green $and_tests_pass
+}
+
+test_not_pull_code_when_assumed_red_and_tests_fail_in_local_mode__short_option() {
+    should_not_pull_when_given -l -r $and_tests_fail
+}
+
+test_not_pull_code_when_assumed_red_and_tests_fail_in_local_mode__long_option() {
+    should_not_pull_when_given --local --red $and_tests_fail
 }
 
 
