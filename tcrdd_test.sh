@@ -185,7 +185,7 @@ should_amend_commit_and_push_when_given() {
     echo content > ${aliceClone}/aFile
     runAsAlice ./tcrdd.sh --red false > /dev/null 2>&1
     echo otherContent >> ${aliceClone}/aFile
-    runAsAlice ./tcrdd.sh --green true > /dev/null 2>&1
+    runAsAlice ./tcrdd.sh ${arguments} > /dev/null 2>&1
     status=$(runAsAlice git status -s)
     nbCommits=$(runAsAlice git rev-list --count ${headHash}..HEAD)
     currentHash=$(runAsAlice getHeadHash)
@@ -203,13 +203,25 @@ test_amend_last_red_commit_and_push_when_assumed_green_and_tests_pass__long_opti
     should_amend_commit_and_push_when_given --green $and_tests_pass
 }
 
-test_amend_commit_with_message() {
+
+should_amend_commit_with_message_when_given() {
+    headHash=$(runAsAlice getHeadHash)
     echo content > ${aliceClone}/aFile
     runAsAlice ./tcrdd.sh --red false > /dev/null 2>&1
     echo otherContent >> ${aliceClone}/aFile
-    runAsAlice ./tcrdd.sh --green --message "Commit message" true > /dev/null 2>&1
+    runAsAlice ./tcrdd.sh $1 $2 "$3" $4 > /dev/null 2>&1
+    nbCommits=$(runAsAlice git rev-list --count ${headHash}..HEAD)
     message=$(runAsAlice getHeadMessage)
     assertEquals 'Alice commit message should not be empty' "$message" "Commit message"
+    assertEquals 'Only one commit should exist' 1 "${nbCommits}"
+}
+
+test_amend_commit_with_message_when_assumed_green_and_tests_pass__short_option() {
+    should_amend_commit_with_message_when_given -g -m "Commit message" $and_tests_pass
+}
+
+test_amend_commit_with_message_when_assumed_green_and_tests_pass__long_option() {
+    should_amend_commit_with_message_when_given --green --message "Commit message" $and_tests_pass
 }
 
 
