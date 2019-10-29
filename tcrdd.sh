@@ -8,6 +8,7 @@ Usage :
 $0 [options...] testCommand [arguments...]
 
 Options:
+    -l, --local             local mode : do not push nor pull
     -g, --green             assume the tests will pass
     -r, --red               assume the tests will fail
     -m, --message MESSAGE   use the provided commit message
@@ -61,7 +62,7 @@ function pull(){
 
 # detect remote changes (not actually fetching them)
 function needsPull(){
-    [[ ! -z `git fetch --dry-run 2>&1` ]]
+    ${ASSUMING_REMOTE} && [[ ! -z `git fetch --dry-run 2>&1` ]]
 }
 
 # if push required, launch tests then push
@@ -73,14 +74,15 @@ function push() {
 
 # detect local changes wrt remote
 function needsPush(){
-    [[ ! -z `git diff ${BRANCH} HEAD` ]]
+    ${ASSUMING_REMOTE} && [[ ! -z `git diff ${BRANCH} HEAD` ]]
 }
 
 # main
 ASSUMING_GREEN=false
 ASSUMING_RED=false
+ASSUMING_REMOTE=true
 
-OPTIONS=`getopt -o grhm: --long green,red,help,message: -n "$(basename $0)" -- "$@"`
+OPTIONS=`getopt -o lgrhm: --long local,green,red,help,message: -n "$(basename $0)" -- "$@"`
 
 eval set -- "${OPTIONS}"
 
@@ -91,6 +93,10 @@ fi
 
 while true; do
   case $1 in
+    -l | --local )
+      ASSUMING_REMOTE=false
+      shift
+      ;;
     -g | --green )
       ASSUMING_GREEN=true
       shift
