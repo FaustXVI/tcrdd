@@ -2,11 +2,11 @@
 . ./test_utils.sh
 
 should_print_usage_when_given() {
-    arguments=$@
+    arguments=("$@")
     headHash=$(runAsAlice getHeadHash)
     echo content > ${aliceClone}/aFile
     startStatus=$(runAsAlice git status -s)
-    runAsAlice ./tcrdd.sh ${arguments} > $stdout
+    runAsAlice ./tcrdd.sh "${arguments[@]}" > $stdout
     status=$(runAsAlice git status -s)
     currentHash=$(runAsAlice getHeadHash)
     stdoutContent=$(cat $stdout)
@@ -32,10 +32,10 @@ test_print_usage_when_given_no_test_command() {
 
 
 should_commit_and_push_when_given() {
-    arguments=$@
+    arguments=("$@")
     headHash=$(runAsAlice getHeadHash)
     echo content > ${aliceClone}/aFile
-    runAsAlice ./tcrdd.sh ${arguments} > /dev/null 2>&1
+    runAsAlice ./tcrdd.sh "${arguments[@]}" > /dev/null 2>&1
     status=$(runAsAlice git status -s)
     message=$(runAsAlice getHeadMessage)
     currentHash=$(runAsAlice getHeadHash)
@@ -57,10 +57,10 @@ test_commit_and_push_when_assumed_green_and_tests_pass__long_option() {
 
 
 should_revert_when_given() {
-    arguments=$@
+    arguments=("$@")
     headHash=$(runAsAlice getHeadHash)
     echo content > ${aliceClone}/aFile
-    runAsAlice ./tcrdd.sh ${arguments} > /dev/null 2>&1
+    runAsAlice ./tcrdd.sh "${arguments[@]}" > /dev/null 2>&1
     status=$(runAsAlice git status -s)
     currentHash=$(runAsAlice getHeadHash)
     assertNull 'Alice s code is not reverted' "$status"
@@ -86,10 +86,10 @@ test_revert_when_assumed_green_and_tests_fail__long_option() {
 
 
 should_remove_untracked_files_when_given() {
-    arguments=$@
+    arguments=("$@")
     headHash=$(runAsAlice getHeadHash)
     echo content > ${aliceClone}/aFile
-    runAsAlice ./tcrdd.sh $arguments > /dev/null 2>&1
+    runAsAlice ./tcrdd.sh "${arguments[@]}" > /dev/null 2>&1
     status=$(runAsAlice git status -s)
     currentHash=$(runAsAlice getHeadHash)
     assertNull 'Alice s code is not reverted' "$status"
@@ -107,12 +107,12 @@ test_remove_untracked_files_when_assumed_green_and_tests_fail__long_option() {
 
 
 should_restore_files_when_given() {
-    arguments=$@
+    arguments=("$@")
     headHash=$(runAsAlice getHeadHash)
     echo content > ${aliceClone}/aFile
     runAsAlice ./tcrdd.sh --green true > /dev/null 2>&1
     echo otherContent >> ${aliceClone}/aFile
-    runAsAlice ./tcrdd.sh ${arguments} > /dev/null 2>&1
+    runAsAlice ./tcrdd.sh "${arguments[@]}" > /dev/null 2>&1
     status=$(runAsAlice git status -s)
     content=$(runAsAlice cat aFile)
     currentHash=$(runAsAlice getHeadHash)
@@ -130,10 +130,10 @@ test_restore_files_when_assumed_green_and_tests_fail__long_option() {
 
 
 should_not_push_when_given() {
-    arguments=$@
+    arguments=("$@")
     headHash=$(runAsAlice getHeadHash)
     echo content > ${aliceClone}/aFile
-    runAsAlice ./tcrdd.sh ${arguments} > /dev/null 2>&1
+    runAsAlice ./tcrdd.sh "${arguments[@]}" > /dev/null 2>&1
     status=$(runAsAlice git status -s)
     message=$(runAsAlice getHeadMessage)
     currentHash=$(runAsAlice getHeadHash)
@@ -155,12 +155,12 @@ test_does_not_push_when_assumed_red_and_tests_fail__long_option() {
 
 
 should_amend_commit_and_not_push_when_given() {
-    arguments=$@
+    arguments=("$@")
     headHash=$(runAsAlice getHeadHash)
     echo content > ${aliceClone}/aFile
     runAsAlice ./tcrdd.sh --red false > /dev/null 2>&1
     echo otherContent >> ${aliceClone}/aFile
-    runAsAlice ./tcrdd.sh ${arguments} > /dev/null 2>&1
+    runAsAlice ./tcrdd.sh "${arguments[@]}" > /dev/null 2>&1
     status=$(runAsAlice git status -s)
     nbCommits=$(runAsAlice git rev-list --count ${headHash}..HEAD)
     currentHash=$(runAsAlice getHeadHash)
@@ -180,12 +180,12 @@ test_amend_last_red_commit_when_assumed_red_and_tests_fail__long_option() {
 
 
 should_amend_commit_and_push_when_given() {
-    arguments=$@
+    arguments=("$@")
     headHash=$(runAsAlice getHeadHash)
     echo content > ${aliceClone}/aFile
     runAsAlice ./tcrdd.sh --red false > /dev/null 2>&1
     echo otherContent >> ${aliceClone}/aFile
-    runAsAlice ./tcrdd.sh ${arguments} > /dev/null 2>&1
+    runAsAlice ./tcrdd.sh "${arguments[@]}" > /dev/null 2>&1
     status=$(runAsAlice git status -s)
     nbCommits=$(runAsAlice git rev-list --count ${headHash}..HEAD)
     currentHash=$(runAsAlice getHeadHash)
@@ -205,11 +205,12 @@ test_amend_last_red_commit_and_push_when_assumed_green_and_tests_pass__long_opti
 
 
 should_amend_commit_with_message_when_given() {
+    arguments=("$@")
     headHash=$(runAsAlice getHeadHash)
     echo content > ${aliceClone}/aFile
     runAsAlice ./tcrdd.sh --red false > /dev/null 2>&1
     echo otherContent >> ${aliceClone}/aFile
-    runAsAlice ./tcrdd.sh "$@" > /dev/null 2>&1
+    runAsAlice ./tcrdd.sh "${arguments[@]}" > /dev/null 2>&1
     nbCommits=$(runAsAlice git rev-list --count ${headHash}..HEAD)
     message=$(runAsAlice getHeadMessage)
     assertEquals 'Alice commit message should not be empty' "$message" "Commit message"
@@ -226,8 +227,9 @@ test_amend_commit_with_message_when_assumed_green_and_tests_pass__long_option() 
 
 
 should_commit_with_message_when_given() {
+    arguments=("$@")
     echo content > ${aliceClone}/aFile
-    runAsAlice ./tcrdd.sh "$@" > /dev/null 2>&1
+    runAsAlice ./tcrdd.sh "${arguments[@]}" > /dev/null 2>&1
     message=$(runAsAlice getHeadMessage)
     assertEquals 'Alice commit message should not be empty' "$message" "Commit message"
 }
@@ -250,7 +252,7 @@ test_commit_with_message_when_assumed_red_and_tests_fail__long_option() {
 
 
 should_pull_when_given() {
-    arguments=$@
+    arguments=("$@")
     headHash=$(runAsAlice getHeadHash)
     
     echo content > ${bobClone}/aFile
@@ -260,7 +262,7 @@ should_pull_when_given() {
     bobHash=$(runAsBob getHeadHash)
 
     echo otherContent >> ${aliceClone}/otherFile
-    runAsAlice ./tcrdd.sh ${arguments} > /dev/null 2>&1
+    runAsAlice ./tcrdd.sh "${arguments[@]}" > /dev/null 2>&1
     searchBobCommit=$(runAsAlice git log --pretty=%H | grep ${bobHash})
     assertNotNull 'Bob s code should be found' "${searchBobCommit}"
     commitsSinceBob=$(runAsAlice git rev-list --count ${bobHash}..HEAD)
