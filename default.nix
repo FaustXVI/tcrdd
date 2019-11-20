@@ -12,7 +12,9 @@ stdenv.mkDerivation rec {
     cp -r $src patched
     chmod +w -R patched
     patchShebangs patched/*.sh
-    substituteInPlace patched/tcrdd.sh --replace 'getopt' ${getopt}/bin/getopt
+    substituteInPlace patched/tcrdd.sh \
+      --replace 'getopt' ${getopt}/bin/getopt \
+      --replace 'git' ${git}/bin/git \
     '';
   buildPhase =''
     cd patched
