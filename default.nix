@@ -5,11 +5,10 @@ with nixpkgs;
 stdenv.mkDerivation {
   name = "tcrdd";
   version = "latest";
-  buildInputs = [ bash git getopt ];
-
   src = ./.;
+  buildInputs = [ bash git getopt ];
   patchPhase = ''
-    patchShebangs *.sh
+    patchShebangs .
     substituteInPlace tcrdd.sh \
       --replace 'getopt' ${getopt}/bin/getopt \
       --replace 'git' ${git}/bin/git
