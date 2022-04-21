@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-BRANCH=origin/master
 MESSAGE=""
 
 function usage() {
@@ -74,7 +73,7 @@ function push() {
 
 # detect local changes wrt remote
 function needsPush(){
-    ${ASSUMING_REMOTE} && [[ ! -z `git diff ${BRANCH} HEAD` ]]
+    ${ASSUMING_REMOTE} && [[ ! -z `git diff @{push}` ]]
 }
 
 # main
