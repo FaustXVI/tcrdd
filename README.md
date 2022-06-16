@@ -1,22 +1,15 @@
 # Install
 
 ```nix
-with import <nixpkgs> {};
-fetchSubmodules = true;
-let
-  tcrdd = callPackage (fetchFromGitHub {
-    owner = "FaustXVI";
-    repo = "tcrdd";
-    fetchSubmodules = true;
-    rev= "...";
-    sha256 = "...";
-  }) {};
-in stdenv.mkDerivation {
-    name = "...";
-    buildInputs = [
-        tcrdd
-    ];
-}
+{ pkgs ? import <nixpkgs> {}}:
+
+pkgs.callPackage (pkgs.fetchFromGitHub {
+  owner = "FaustXVI";
+  repo = "tcrdd";
+  fetchSubmodules = true;
+  rev= "...";
+  sha256 = "...";
+}) {}
 ```
 
 # Usage
